@@ -5,11 +5,12 @@ import numpy
 import scipy.stats
 
 
-DB = create_engine("postgresql://localhost/ppmedi").connect()
+DBNAME = "penispros"
+DB = create_engine("postgresql://localhost/%s" % DBNAME).connect()
 QUERY = """
-SELECT pdc.provider AS prov, pdc.dgnscd1 AS diag, pdc.count::float/pc.count AS freq
-FROM prov_counts AS pc, prov_diag_counts AS pdc
-WHERE pc.provider = pdc.provider
+SELECT pdc.provider AS prov, pdc.dgnscd AS diag, pdc.count::float/pc.count AS freq
+FROM prov_counts AS pc, diagnoses AS pdc
+WHERE pc.provider::text = pdc.provider
 """
 def get_distributions():
   with DB.begin() as conn:
@@ -26,7 +27,7 @@ def get_comorbidity_mappings():
       parts = filter(bool, line.split("   "))
       if len(parts) != 3:
         continue
-      mappings[parts[0]] = parts[1]
+      mappings[parts[0]] = parts[2].strip()
     return mappings
 
 def summarize(distribution):

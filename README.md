@@ -19,7 +19,24 @@ In general it's
 
 Issue: multiple columns for a given attribute
 
-TODO
+TODOs
+=======
 
-x mapping of generalized attribute to list of attributes
-1. rewrite queries to query list of attributes via union
+1. test on
+    * group by provider, diagnoses, count
+    * group by provider, diagnoses, sum(cost)
+
+1. generalize distribution getter so there's generic grouping and nomalizer
+    * two group bys, aggregate, where clause (optional)
+    * normalizer computed on detailed table
+2. once the top k statistical results are found (call it diag X)
+    1. send some example lists to Olga et al
+3. Further analysis
+    * show examples of the extremes
+    * classify all tuples in dataset as  with diag X and without
+    * filter for those tuples in base table and throw logit regression at it
+
+Data sources
+-------
+
+* [List of ICD9 codes](https://www.section111.cms.hhs.gov/MRA/help/icd9.dx.codes.htm)
