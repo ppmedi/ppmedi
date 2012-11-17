@@ -1,0 +1,366 @@
+4911    Chronic Pulmonary Disease   1
+49120   Chronic Pulmonary Disease   1
+49121   Chronic Pulmonary Disease   1
+49122   Chronic Pulmonary Disease   1
+4918    Chronic Pulmonary Disease   1
+4919    Chronic Pulmonary Disease   1
+4920    Chronic Pulmonary Disease   1
+4928    Chronic Pulmonary Disease   1
+49310   Chronic Pulmonary Disease   1
+49311   Chronic Pulmonary Disease   1
+49312   Chronic Pulmonary Disease   1
+49320   Chronic Pulmonary Disease   1
+49321   Chronic Pulmonary Disease   1
+49322   Chronic Pulmonary Disease   1
+49390   Chronic Pulmonary Disease   1
+49391   Chronic Pulmonary Disease   1
+49392   Chronic Pulmonary Disease   1
+494 Chronic Pulmonary Disease   1
+4940    Chronic Pulmonary Disease   1
+4941    Chronic Pulmonary Disease   1
+496 Chronic Pulmonary Disease   1
+501 Chronic Pulmonary Disease   1
+5064    Chronic Pulmonary Disease   1
+515 Chronic Pulmonary Disease   1
+25000   Diabetes    2
+25001   Diabetes    2
+25002   Diabetes    2
+25003   Diabetes    2
+25010   Diabetes    2
+25011   Diabetes    2
+25012   Diabetes    2
+25013   Diabetes    2
+25020   Diabetes    2
+25021   Diabetes    2
+25022   Diabetes    2
+25023   Diabetes    2
+25040   Diabetes    2
+25041   Diabetes    2
+25042   Diabetes    2
+25043   Diabetes    2
+25050   Diabetes    2
+25051   Diabetes    2
+25052   Diabetes    2
+25053   Diabetes    2
+25060   Diabetes    2
+25061   Diabetes    2
+25062   Diabetes    2
+25063   Diabetes    2
+25070   Diabetes    2
+25071   Diabetes    2
+25072   Diabetes    2
+25073   Diabetes    2
+25080   Diabetes    2
+25081   Diabetes    2
+25082   Diabetes    2
+25083   Diabetes    2
+25090   Diabetes    2
+25091   Diabetes    2
+25092   Diabetes    2
+25093   Diabetes    2
+24940   Diabetes    2
+24941   Diabetes    2
+24950   Diabetes    2
+24951   Diabetes    2
+24960   Diabetes    2
+24961   Diabetes    2
+24970   Diabetes    2
+24971   Diabetes    2
+24980   Diabetes    2
+24981   Diabetes    2
+24990   Diabetes    2
+24991   Diabetes    2
+3572    Diabetes    2
+36201   Diabetes    2
+36202   Diabetes    2
+36203   Diabetes    2
+36204   Diabetes    2
+36205   Diabetes    2
+36206   Diabetes    2
+36207   Diabetes    2
+36208   Diabetes    2
+1500    Cancer  3
+1501    Cancer  3
+1502    Cancer  3
+1503    Cancer  3
+1504    Cancer  3
+1505    Cancer  3
+1508    Cancer  3
+1509    Cancer  3
+1510    Cancer  3
+1511    Cancer  3
+1512    Cancer  3
+1513    Cancer  3
+1514    Cancer  3
+1515    Cancer  3
+1516    Cancer  3
+1518    Cancer  3
+1519    Cancer  3
+1550    Cancer  3
+1551    Cancer  3
+1552    Cancer  3
+1570    Cancer  3
+1571    Cancer  3
+1572    Cancer  3
+1573    Cancer  3
+1574    Cancer  3
+1578    Cancer  3
+1579    Cancer  3
+1580    Cancer  3
+1588    Cancer  3
+1589    Cancer  3
+1620    Cancer  3
+1622    Cancer  3
+1623    Cancer  3
+1624    Cancer  3
+1625    Cancer  3
+1628    Cancer  3
+1629    Cancer  3
+1630    Cancer  3
+1631    Cancer  3
+1638    Cancer  3
+1639    Cancer  3
+1830    Cancer  3
+1832    Cancer  3
+1833    Cancer  3
+1834    Cancer  3
+1835    Cancer  3
+1838    Cancer  3
+1839    Cancer  3
+1910    Cancer  3
+1911    Cancer  3
+1912    Cancer  3
+1913    Cancer  3
+1914    Cancer  3
+1915    Cancer  3
+1916    Cancer  3
+1917    Cancer  3
+1918    Cancer  3
+1919    Cancer  3
+20400   Cancer  3
+20402   Cancer  3
+20410   Cancer  3
+20412   Cancer  3
+20420   Cancer  3
+20422   Cancer  3
+20480   Cancer  3
+20482   Cancer  3
+20500   Cancer  3
+20502   Cancer  3
+20510   Cancer  3
+20512   Cancer  3
+20520   Cancer  3
+20522   Cancer  3
+20530   Cancer  3
+20532   Cancer  3
+20580   Cancer  3
+20582   Cancer  3
+20590   Cancer  3
+20592   Cancer  3
+20600   Cancer  3
+20612   Cancer  3
+20620   Cancer  3
+20622   Cancer  3
+20680   Cancer  3
+20682   Cancer  3
+20690   Cancer  3
+20692   Cancer  3
+20700   Cancer  3
+20702   Cancer  3
+20710   Cancer  3
+20712   Cancer  3
+20720   Cancer  3
+20722   Cancer  3
+20780   Cancer  3
+20782   Cancer  3
+20800   Cancer  3
+20802   Cancer  3
+20810   Cancer  3
+20812   Cancer  3
+20820   Cancer  3
+20822   Cancer  3
+20880   Cancer  3
+20882   Cancer  3
+20890   Cancer  3
+20892   Cancer  3
+20920   Cancer  3
+20921   Cancer  3
+20923   Cancer  3
+20930   Cancer  3
+51181   Cancer  3
+1960    Cancer  3
+1961    Cancer  3
+1962    Cancer  3
+1963    Cancer  3
+1965    Cancer  3
+1966    Cancer  3
+1968    Cancer  3
+1969    Cancer  3
+1970    Cancer  3
+1971    Cancer  3
+1972    Cancer  3
+1973    Cancer  3
+1974    Cancer  3
+1975    Cancer  3
+1976    Cancer  3
+1977    Cancer  3
+1978    Cancer  3
+1980    Cancer  3
+1981    Cancer  3
+1982    Cancer  3
+1983    Cancer  3
+1984    Cancer  3
+1985    Cancer  3
+1986    Cancer  3
+1987    Cancer  3
+19881   Cancer  3
+19882   Cancer  3
+19889   Cancer  3
+1990    Cancer  3
+1991    Cancer  3
+27800   Obesity 4
+27801   Obesity 4
+27802   Obesity 4
+V8520   Obesity 4
+V8521   Obesity 4
+V8522   Obesity 4
+V8523   Obesity 4
+V8524   Obesity 4
+V8525   Obesity 4
+V8530   Obesity 4
+V8531   Obesity 4
+V8532   Obesity 4
+V8533   Obesity 4
+V8534   Obesity 4
+V8535   Obesity 4
+V8536   Obesity 4
+V8537   Obesity 4
+V8538   Obesity 4
+V8539   Obesity 4
+V8540   Obesity 4
+V8541   Obesity 4
+V8542   Obesity 4
+V8543   Obesity 4
+V8544   Obesity 4
+V8545   Obesity 4
+042 HIV 5
+4400    Vascular Disease    6
+4401    Vascular Disease    6
+44020   Vascular Disease    6
+44021   Vascular Disease    6
+44022   Vascular Disease    6
+44023   Vascular Disease    6
+44024   Vascular Disease    6
+44029   Vascular Disease    6
+4403    Vascular Disease    6
+44030   Vascular Disease    6
+44031   Vascular Disease    6
+44032   Vascular Disease    6
+4404    Vascular Disease    6
+4408    Vascular Disease    6
+4409    Vascular Disease    6
+4410    Vascular Disease    6
+44100   Vascular Disease    6
+44101   Vascular Disease    6
+44102   Vascular Disease    6
+44103   Vascular Disease    6
+4411    Vascular Disease    6
+4412    Vascular Disease    6
+4413    Vascular Disease    6
+4414    Vascular Disease    6
+4415    Vascular Disease    6
+4416    Vascular Disease    6
+4417    Vascular Disease    6
+4419    Vascular Disease    6
+4439    Vascular Disease    6
+40301   Renal Failure   7
+40311   Renal Failure   7
+40391   Renal Failure   7
+585 Renal Failure   7
+5851    Renal Failure   7
+5852    Renal Failure   7
+5853    Renal Failure   7
+5854    Renal Failure   7
+5855    Renal Failure   7
+5856    Renal Failure   7
+5859    Renal Failure   7
+V4511   Renal Failure   7
+V4512   Renal Failure   7
+V560    Renal Failure   7
+V568    Renal Failure   7
+2900    Dementia    8
+29010   Dementia    8
+29011   Dementia    8
+29012   Dementia    8
+29013   Dementia    8
+29020   Dementia    8
+29021   Dementia    8
+2903    Dementia    8
+29040   Dementia    8
+29041   Dementia    8
+29042   Dementia    8
+29043   Dementia    8
+2908    Dementia    8
+2909    Dementia    8
+2940    Dementia    8
+2941    Dementia    8
+29410   Dementia    8
+29411   Dementia    8
+2948    Dementia    8
+2949    Dementia    8
+3310    Dementia    8
+3312    Dementia    8
+797 Dementia    8
+5712    Liver Disease   9
+5715    Liver Disease   9
+5716    Liver Disease   9
+5723    Liver Disease   9
+4111    Coronary Artery Disease 10
+4118    Coronary Artery Disease 10
+41181   Coronary Artery Disease 10
+41189   Coronary Artery Disease 10
+412 Coronary Artery Disease 10
+4130    Coronary Artery Disease 10
+4139    Coronary Artery Disease 10
+4140    Coronary Artery Disease 10
+41400   Coronary Artery Disease 10
+41401   Coronary Artery Disease 10
+41402   Coronary Artery Disease 10
+41403   Coronary Artery Disease 10
+41404   Coronary Artery Disease 10
+41405   Coronary Artery Disease 10
+41406   Coronary Artery Disease 10
+41407   Coronary Artery Disease 10
+4142    Coronary Artery Disease 10
+4143    Coronary Artery Disease 10
+4148    Coronary Artery Disease 10
+4149    Coronary Artery Disease 10
+4280    Heart Failure   11
+4281    Heart Failure   11
+4282    Heart Failure   11
+42820   Heart Failure   11
+42821   Heart Failure   11
+42822   Heart Failure   11
+42823   Heart Failure   11
+4283    Heart Failure   11
+42830   Heart Failure   11
+42831   Heart Failure   11
+42832   Heart Failure   11
+42833   Heart Failure   11
+4284    Heart Failure   11
+42840   Heart Failure   11
+42841   Heart Failure   11
+42842   Heart Failure   11
+42843   Heart Failure   11
+4289    Heart Failure   11
+39891   Heart Failure   11
+40201   Heart Failure   11
+40211   Heart Failure   11
+40291   Heart Failure   11
+40401   Heart Failure   11
+40403   Heart Failure   11
+40411   Heart Failure   11
+40413   Heart Failure   11
+40491   Heart Failure   11
+40493   Heart Failure   11
+2851    PostblahAnemia  12
