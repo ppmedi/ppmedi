@@ -46,7 +46,7 @@ def get_comorbidity_mappings():
       parts = filter(bool, line.split("   "))
       if len(parts) != 3:
         continue
-      mappings[parts[0]] = parts[1]
+      mappings[parts[0]] = parts[2].strip()
     return mappings
 
 def get_mappings(group):
