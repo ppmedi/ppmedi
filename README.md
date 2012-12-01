@@ -22,9 +22,37 @@ Issue: multiple columns for a given attribute
 TODOs
 =======
 
+1. Add GINI in addition to skew
+
 1. test on
-    * group by provider, diagnoses, count
-    * group by provider, diagnoses, sum(cost)
+  skewed diagnoses
+    * group by provider, UNION(dgnscd1), count
+    * group by provider, UNION(dgnscd2...9), count
+    * group by provider, UNION(dgnscd1...9), count
+    * group by doctor, UNION(dgnscd1), count
+    * group by doctor, UNION(dgnscd2...9), count
+    * group by doctor, UNION(dgnscd1...9), count
+
+  skewed costs for treatment
+    * group by provider, UNION(dgnscd1), sum(cost)
+    * group by provider, UNION(dgnscd2...9), sum(cost)
+    * group by provider, UNION(dgnscd1...9), sum(cost)
+    * group by doctor, UNION(dgnscd1), sum(cost)
+    * group by doctor, UNION(dgnscd2...9), sum(cost)
+    * group by doctor, UNION(dgnscd1...9), sum(cost)
+
+  skewed treatments
+    * group by provider, UNION(treatment1), count
+    * group by provider, UNION(treatment2...9), count
+    * group by provider, UNION(treatment1...9), count
+    * group by doctor, UNION(treatment1), count
+    * group by doctor, UNION(treatment2...9), count
+    * group by doctor, UNION(treatment1...9), count
+
+  for some diagnosis, is there a skewed treatment
+  (note: makes non-crossproduct assumption, that dgnsN is treated by treatmentN)
+    * group by provider, UNION(treatment1Xdgnscd1...treatmentNxdgnscdN), count
+    * group by doctor, UNION(treatment1Xdgnscd1...treatmentNxdgnscdN), count
 
 1. generalize distribution getter so there's generic grouping and nomalizer
     * two group bys, aggregate, where clause (optional)
