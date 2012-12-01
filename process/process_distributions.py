@@ -6,6 +6,12 @@ import scipy.stats
 
 N = 10
 DB = create_engine("postgresql://localhost/ppmedi").connect()
+SUMMARY_FUNCS = {
+  #    'gini':,
+  'stdev': numpy.std,
+  'kurtosis': scipy.stats.kurtosis,
+  'skew': scipy.stats.skew,
+}
 
 def get_distributions(table, join_cols, agg_group_cols, aggregate_col):
   """
@@ -63,12 +69,7 @@ def get_mappings(group):
   return mappings
 
 def summarize(distribution):
-  return {
-#    'gini':,
-    'stdev': numpy.std(distribution),
-    'kurtosis': scipy.stats.kurtosis(distribution),
-    'skew': scipy.stats.skew(distribution),
-  }    
+  return {key: func(distribution) for key, func in SUMMARY_FUNCS.iteritems()}
 
 def summarize_distributions(distributions):
   summaries = []
@@ -92,11 +93,16 @@ def print_n_worst(summaries, mappings, n, key):
                               apply_mappings(mappings, summary['group']))
   print "\n\n\n"
 
-if __name__ == "__main__":
-  agg_group_cols = ('dgnscd1',)
-  distributions = get_distributions('prov_diag_counts', ('provider',), agg_group_cols, 'count')
+def top_stats(table, join_cols, agg_group_cols, aggregate_col):
+  """
+  Prints the top N highest groups for each statistic in SUMMARY_FUNCS.
+  Arguments are the same as those in get_distributions
+  """
+  distributions = get_distributions(table, join_cols, agg_group_cols, aggregate_col)
   mappings = get_mappings(agg_group_cols)
   summaries = summarize_distributions(distributions)
-  for stat in ('stdev', 'skew', 'kurtosis'):
+  for stat in SUMMARY_FUNCS.iterkeys():
     print_n_worst(summaries, mappings, N, stat)
 
+if __name__ == "__main__":
+  top_stats('prov_diag_counts', ('provider',), ('dgnscd1',) , 'count')
