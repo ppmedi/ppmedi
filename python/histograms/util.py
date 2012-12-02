@@ -181,7 +181,7 @@ class ColMapper(object):
         """
         mapping = defaultdict(list)
         with self.db.begin() as conn:
-            cursor = db.execute("select * from %s limit 1" % self.table)
+            cursor = self.db.execute("select * from %s limit 1" % self.table)
             cols = cursor.keys()
 
             for col in cols:

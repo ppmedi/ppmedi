@@ -1,5 +1,8 @@
 from histograms.util import HistogramMaker
 from process.process_distributions import top_stats
+from sqlalchemy import create_engine
+
+DB = create_engine("postgresql://localhost/ppmedi").connect()
 
 if __name__ == "__main__":
   hm = HistogramMaker(DB, 'inp')

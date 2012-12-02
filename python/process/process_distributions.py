@@ -1,12 +1,10 @@
 from collections import defaultdict
-from sqlalchemy import create_engine
 from histograms.util import HistogramMaker
 
 import numpy
 import scipy.stats
 
 N = 10
-DB = "postgresql://localhost/ppmedi"
 SUMMARY_FUNCS = {
   #    'gini':,
   'stdev': numpy.std,
