@@ -5,6 +5,7 @@ import numpy
 import scipy.stats
 
 N = 10
+ICD_FILES = "../data/icd9_codes.txt"
 SUMMARY_FUNCS = {
   #    'gini':,
   'stdev': numpy.std,
@@ -45,7 +46,7 @@ def get_distributions(table, join_cols, agg_group_cols, aggregate_col):
   return distributions
 
 def get_comorbidity_mappings():
-  with open('data/icd9_codes.txt', 'r') as file:
+  with open(ICD_FILES, 'r') as file:
     mappings = defaultdict(lambda:"???????")
     for line in file:
       parts = filter(bool, line.split("   "))

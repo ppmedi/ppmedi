@@ -8,14 +8,30 @@ from collections import defaultdict
 from sqlalchemy import *
 
 re_col = re.compile('\d+$')
-
-
 format_iter = lambda fmt, l: (fmt % el for el in l)
+fix_star_for_str = lambda aggs: [(ag, ac, '_count_' if ac == '*' else ac) for
+        ag, ac in aggs]
+
+class get_cache():
+    def __init__(self, fname):
+        self.db = None 
+        self.fname = fname
+
+    def __enter__(self):
+        self.db = bsddb3.hashopen(self.fname)
+        return self.db
+
+    def __exit__(self, type, value, traceback):
+        try:
+            self.db.close()
+        except:
+            pass
 
 class HistogramMaker(object):
     def __init__(self, db, table):
         self.db = db
         self.table = table
+        self.cachename = './gbcache.db'
 
     def __call__(self, tablename, join_cols, agg_group_cols, aggs, colrange=None):
         """
@@ -26,6 +42,8 @@ class HistogramMaker(object):
                e.g., diag1, diag2,... diag9
         @param aggs [(agg_func, agg_colname)]
         """
+        # NOTE: aggs is now [(agg_func, agg_arg, agg_name)*]
+        aggs = fix_star_for_str(aggs)
 
         # first create union of the columns
         union_maker = UnionMaker(self.db, self.table)
@@ -35,15 +53,16 @@ class HistogramMaker(object):
         self.execute_groupby(tablename, union_tablename, join_cols+agg_group_cols, aggs=aggs)
 
         # normalize and return
-        norm_subquery = self.construct_norm_query(union_tablename, join_cols, aggs)
+        norm_subquery = self.construct_norm_query(tablename, join_cols, aggs)
 
         gbs = join_cols + agg_group_cols
         gb_exprs = format_iter('t.%s as %s', zip(gbs, gbs))
         gb_exprs = ','.join(gb_exprs)
-        agg_exprs = ["t.%s::float/norm_t.%s as %s" % (ac, ac, ac) for ag, ac in aggs]
+        agg_exprs = [(ac, ac, ac) for ag, _, ac in aggs]
+        agg_exprs = format_iter("t.%s::float/norm_t.%s as %s", agg_exprs)
         agg_exprs = ','.join(agg_exprs)
         select_clause = "SELECT %s, %s" % (gb_exprs, agg_exprs)
-        from_clause = "FROM %s as t, (%s) as norm_t" % (union_tablename, norm_subquery)
+        from_clause = "FROM %s as t, (%s) as norm_t" % (tablename, norm_subquery)
         where_clause = "WHERE %s" % ' and '.join(format_iter("t.%s = norm_t.%s", zip(join_cols, join_cols)))
 
         query = "%s\n%s\n%s;" % (select_clause, 
@@ -56,8 +75,9 @@ class HistogramMaker(object):
             for row in conn.execute(query):
                 group = tuple(map(str, (row[col] for col in agg_group_cols)))
                 #vals = dict([(ac, row[ac]) for ag, ac in aggs])
-                ac = aggs[0][1]
-                dists[group].append(row[ac])
+                # XXX: Hack to return only one statistic
+                ag, ac, an = aggs[0]
+                dists[group].append(row[an])
             return dists
         return None
 
@@ -65,23 +85,23 @@ class HistogramMaker(object):
     def construct_norm_query(self, tablename, join_cols, aggs):
         gbs = ','.join(join_cols)
         agg_exprs = []
-        for ag, ac in aggs:
+        for ag, ac, an in aggs:
             if ag.lower() == 'count':
                 ag = 'SUM'
-            agg_exprs.append('%s(%s) as %s' % (ag, ac, ac))
+            agg_exprs.append('%s(%s) as %s' % (ag, an, an))
         agg_exprs = ','.join(agg_exprs)
         norm_query = "SELECT %s, %s FROM %s GROUP BY %s" % (gbs, agg_exprs, tablename, gbs)
         return norm_query
 
 
     def execute_groupby(self, tablename, union_tablename, gbs, aggs=[]):
+        key = str(tuple([tablename, union_tablename] + list(gbs) + list(aggs)))
+        with get_cache(self.cachename) as cache:
+            if key in cache:
+                return
 
-        #
-        # now execute the groupby...
-        #
-
-        sel_aggs = ['%s(%s) as %s' % (ag, ac, ac) for  ag, ac in aggs]
-        sel_cols = list(gbs) + sel_aggs
+        sel_aggs = format_iter('%s(%s) as %s', aggs)
+        sel_cols = list(gbs) + list(sel_aggs)
         sel_cols = ','.join(sel_cols)
         q = "drop table if exists %s; create table %s as select %s from %s group by %s"
         q = q % (tablename, tablename, sel_cols, union_tablename, ','.join(gbs))
@@ -90,8 +110,9 @@ class HistogramMaker(object):
         with self.db.begin() as conn:
             conn.execute(q)
 
-        # save this info somewhere so we can cache
-        #self.store(tablename, (gbs, aggs))
+        with get_cache(self.cachename) as cache:
+            cache[key] = 'True'
+
  
 
 class UnionMaker(object):
@@ -99,27 +120,19 @@ class UnionMaker(object):
         self.db = db
         self.table = table
         self.mapper = ColMapper(db, table)
-        self.schemadb = bsddb3.hashopen('./groupby.db')
-
-    def tablenames(self):
-        if 'tablenames' not in self.schemadb:
-            return []
-        return json.loads(self.schemadb['tablenames'])
-
-    def info(self, tablename):
-        if tablename not in self.schemadb:
-            return None
-        return json.loads(self.schemadb[tablename])
-
-    def store(self, tablename, (data)):
-        self.schemadb[tablename] = json.dumps(data)
-        tablenames = self.tablenames()
-        tablenames.append(tablename)
-        self.schemadb['tablenames'] = json.dumps(tablenames)
+        self.cachename = './groupby.db'
 
 
-    def __call__(self, *args, **kwargs):
-        union_tablename = self.disambiguate_table(*args, **kwargs)
+    def __call__(self, tablename, gbs, aggs=[], colrange=None):
+        key = str(tuple( [tablename] + list(gbs) + list(aggs) + (list(colrange) if colrange else [])))
+        with get_cache(self.cachename) as cache:
+            if key in cache:
+                return cache[key]
+
+        union_tablename = self.disambiguate_table(tablename, gbs, aggs=[], colrange=None)
+
+        with get_cache(self.cachename) as cache:
+            cache[key] = union_tablename
         return union_tablename
 
 
@@ -133,7 +146,9 @@ class UnionMaker(object):
         # first create a retardedly large table with the 
         # cross product of all gbs
         combos = product(*[self.mapper(col, colrange) for col in gbs])
-        agg_funcs, agg_cols = aggs and zip(*aggs) or ([], [])
+        print aggs
+        aggs = filter(lambda triple: triple[1] != '*', aggs)
+        agg_funcs, _, agg_cols = aggs and zip(*aggs) or ([], [], [])
         union_tablename = '%s_union' % tablename
 
         # XXX: not sure we should be taking the cross product of the columns...
