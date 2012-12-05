@@ -47,13 +47,39 @@ class HistogramMaker(object):
 
         # first create union of the columns
         union_maker = UnionMaker(self.db, self.table)
-        union_tablename = union_maker(tablename, join_cols+agg_group_cols, aggs=aggs, colrange=colrange) 
+        union_tablename = "%s_union" % tablename
+        union_maker(union_tablename, join_cols+agg_group_cols, aggs=aggs, colrange=colrange) 
 
         # execute group by
-        self.execute_groupby(tablename, union_tablename, join_cols+agg_group_cols, aggs=aggs)
+        gb_tablename = "%s_gb" % tablename
+        self.execute_groupby(gb_tablename, union_tablename,
+                join_cols+agg_group_cols, aggs=aggs)
 
         # normalize and return
-        norm_subquery = self.construct_norm_query(tablename, join_cols, aggs)
+        self.execute_histogram_query(tablename, gb_tablename, join_cols, agg_group_cols, aggs)
+
+        select_query = "SELECT * FROM %s" % tablename
+        with self.db.begin() as conn:
+
+            dists = defaultdict(list)
+            for row in conn.execute(select_query):
+                group = tuple(map(str, (row[col] for col in agg_group_cols)))
+                #vals = dict([(ac, row[ac]) for ag, ac in aggs])
+                # XXX: Hack to return only one statistic
+                ag, ac, an = aggs[0]
+                dists[group].append(row[an])
+            return dists
+        return None
+
+    def execute_histogram_query(self, tablename, gb_tablename, join_cols, agg_group_cols, aggs):
+        key = str(tuple([tablename, gb_tablename] + list(join_cols) + list(agg_group_cols) + list(aggs)))
+        key = '%s_histogram' % key
+        with get_cache(self.cachename) as cache:
+            if key in cache:
+                print "execute_histogram: cache hit"
+                return
+
+        norm_subquery = self.construct_norm_query(gb_tablename, join_cols, aggs)
 
         gbs = join_cols + agg_group_cols
         gb_exprs = format_iter('t.%s as %s', zip(gbs, gbs))
@@ -62,24 +88,24 @@ class HistogramMaker(object):
         agg_exprs = format_iter("t.%s::float/norm_t.%s as %s", agg_exprs)
         agg_exprs = ','.join(agg_exprs)
         select_clause = "SELECT %s, %s" % (gb_exprs, agg_exprs)
-        from_clause = "FROM %s as t, (%s) as norm_t" % (tablename, norm_subquery)
+        from_clause = "FROM %s as t, (%s) as norm_t" % (gb_tablename, norm_subquery)
         where_clause = "WHERE %s" % ' and '.join(format_iter("t.%s = norm_t.%s", zip(join_cols, join_cols)))
 
-        query = "%s\n%s\n%s;" % (select_clause, 
+        query = "%s\n%s\n%s" % (select_clause, 
                                  from_clause,
                                  where_clause)
-        print query
+        create_query = "DROP TABLE IF EXISTS %s; CREATE TABLE %s as (%s)" % (tablename, tablename, query)
+        print create_query
+
 
         with self.db.begin() as conn:
-            dists = defaultdict(list)
-            for row in conn.execute(query):
-                group = tuple(map(str, (row[col] for col in agg_group_cols)))
-                #vals = dict([(ac, row[ac]) for ag, ac in aggs])
-                # XXX: Hack to return only one statistic
-                ag, ac, an = aggs[0]
-                dists[group].append(row[an])
-            return dists
-        return None
+            conn.execute(create_query)
+
+
+        with get_cache(self.cachename) as cache:
+            cache[key] = 'True'
+
+
 
 
     def construct_norm_query(self, tablename, join_cols, aggs):
@@ -98,6 +124,7 @@ class HistogramMaker(object):
         key = str(tuple([tablename, union_tablename] + list(gbs) + list(aggs)))
         with get_cache(self.cachename) as cache:
             if key in cache:
+                print "execute_groupby: cache hit"
                 return
 
         sel_aggs = format_iter('%s(%s) as %s', aggs)
@@ -127,6 +154,7 @@ class UnionMaker(object):
         key = str(tuple( [tablename] + list(gbs) + list(aggs) + (list(colrange) if colrange else [])))
         with get_cache(self.cachename) as cache:
             if key in cache:
+                print "union: cache hit"
                 return cache[key]
 
         union_tablename = self.disambiguate_table(tablename, gbs, aggs=[], colrange=None)
@@ -162,11 +190,14 @@ class UnionMaker(object):
             
             with self.db.begin() as conn:
                 if first:
-                    print q
-                    conn.execute("drop table if exists %s; create table %s as %s" % (union_tablename, union_tablename, q))
-                    first = False
+                    q = "drop table if exists %s; create table %s as %s" % (union_tablename, union_tablename, q)
                 else:
-                    conn.execute("insert into %s (%s)" % (union_tablename, q))
+                    q = "insert into %s (%s)" % (union_tablename, q)
+
+                print q
+                first = False
+                conn.execute(q)
+
         
         return union_tablename
 
