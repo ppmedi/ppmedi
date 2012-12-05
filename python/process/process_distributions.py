@@ -62,7 +62,7 @@ def get_mappings(group):
   def como_map(x): return como_mappings[x]
 
   for item in group:
-    if item in {'diagnosis', 'dgnscd1'}:
+    if item in {'diagnosis', 'dgnscd1'} or item.startswith('dgnscd'):
       mappings.append(como_map)
     else:
       mappings.append(noop)

@@ -6,6 +6,6 @@ DB = create_engine("postgresql://localhost/penispros")#.connect()
 
 if __name__ == "__main__":
   hm = HistogramMaker(DB, 'inp')
-  top_stats(hm, 'prov_diag_counts', ('provider',), ('dgnscd1',) , [('count','*')], range(2,10))
+  top_stats(hm, 'prov_diag_counts', ('provider',), ('dgnscd',) , [('count','*')], range(2,10))
 
 

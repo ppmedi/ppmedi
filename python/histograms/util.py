@@ -48,7 +48,7 @@ class HistogramMaker(object):
         # first create union of the columns
         union_maker = UnionMaker(self.db, self.table)
         union_tablename = "%s_union" % tablename
-        union_maker(union_tablename, join_cols+agg_group_cols, aggs=aggs, colrange=colrange) 
+        union_maker(tablename, union_tablename, join_cols+agg_group_cols, aggs=aggs, colrange=colrange) 
 
         # execute group by
         gb_tablename = "%s_gb" % tablename
@@ -150,21 +150,21 @@ class UnionMaker(object):
         self.cachename = './groupby.db'
 
 
-    def __call__(self, tablename, gbs, aggs=[], colrange=None):
-        key = str(tuple( [tablename] + list(gbs) + list(aggs) + (list(colrange) if colrange else [])))
+    def __call__(self, tablename, union_tablename, gbs, aggs=[], colrange=None):
+        key = str(tuple( [tablename, union_tablename] + list(gbs) + list(aggs) + (list(colrange) if colrange else [])))
         with get_cache(self.cachename) as cache:
             if key in cache:
                 print "union: cache hit"
                 return cache[key]
 
-        union_tablename = self.disambiguate_table(tablename, gbs, aggs=[], colrange=None)
+        union_tablename = self.disambiguate_table(tablename, union_tablename, gbs, aggs=[], colrange=None)
 
         with get_cache(self.cachename) as cache:
             cache[key] = union_tablename
         return union_tablename
 
 
-    def disambiguate_table(self, tablename, gbs, aggs=[], colrange=None):
+    def disambiguate_table(self, tablename, union_tablename, gbs, aggs=[], colrange=None):
         """
         replaces the shortname column names in @gbs with
         the actual column names (e.g., gb = diag, actual = diag1, diag2,...)
@@ -177,7 +177,6 @@ class UnionMaker(object):
         print aggs
         aggs = filter(lambda triple: triple[1] != '*', aggs)
         agg_funcs, _, agg_cols = aggs and zip(*aggs) or ([], [], [])
-        union_tablename = '%s_union' % tablename
 
         # XXX: not sure we should be taking the cross product of the columns...
         big_query = []
