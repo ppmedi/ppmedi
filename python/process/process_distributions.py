@@ -4,7 +4,6 @@ from histograms.util import HistogramMaker
 import numpy
 import scipy.stats
 
-N = 10
 ICD_FILES = "../data/icd9_codes.txt"
 SUMMARY_FUNCS = {
   #    'gini':,
@@ -23,11 +22,11 @@ def get_distributions(table, join_cols, agg_group_cols, aggregate_col):
 
   Generates the following query
   SELECT stats.provider, stats.diagnosis, stats.count::float/normalize.normalize_sum AS freq
-  FROM prov_diag_counts AS stats, 
+  FROM prov_diag_counts AS stats,
        (SELECT provider, SUM(count) AS normalize_sum FROM prov_diag_counts GROUP BY provider) as normalize
   WHERE stats.provider = normalize.provider;
 
-  Returns {(diagnosis, ): [freq1, ..., freqN]} 
+  Returns {(diagnosis, ): [freq1, ..., freqN]}
   """
   normalize_query = "SELECT %s, SUM(%s) AS normalize_sum FROM %s GROUP BY %s" % (
     ", ".join(join_cols), aggregate_col, table, ", ".join(join_cols))
@@ -93,7 +92,7 @@ def print_n_worst(summaries, mappings, n, key):
                               apply_mappings(mappings, summary['group']))
   print "\n\n\n"
 
-def top_stats(hm, table, join_cols, agg_group_cols, aggregate_col, ranges):
+def top_stats(hm, table, join_cols, agg_group_cols, aggregate_col, ranges, N=50):
   """
   Prints the top N highest groups for each statistic in SUMMARY_FUNCS.
   Arguments are the same as those in get_distributions
@@ -101,6 +100,7 @@ def top_stats(hm, table, join_cols, agg_group_cols, aggregate_col, ranges):
   distributions = hm(table, join_cols, agg_group_cols, aggregate_col, ranges)
   mappings = get_mappings(agg_group_cols)
   summaries = summarize_distributions(distributions)
+  print "TABLE:", table
   for stat in SUMMARY_FUNCS.iterkeys():
     print_n_worst(summaries, mappings, N, stat)
 

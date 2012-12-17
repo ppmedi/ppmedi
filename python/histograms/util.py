@@ -14,7 +14,7 @@ fix_star_for_str = lambda aggs: [(ag, ac, '_count_' if ac == '*' else ac) for
 
 class get_cache():
     def __init__(self, fname):
-        self.db = None 
+        self.db = None
         self.fname = fname
 
     def __enter__(self):
@@ -37,7 +37,7 @@ class HistogramMaker(object):
         """
         @param tablename resulting tablename that histogram should be stored in
         @param join_cols [provider]
-        @param agg_group_cols [diagnosis] 
+        @param agg_group_cols [diagnosis]
                Note diagnosis has multiple columns in the database
                e.g., diag1, diag2,... diag9
         @param aggs [(agg_func, agg_colname)]
@@ -48,7 +48,7 @@ class HistogramMaker(object):
         # first create union of the columns
         union_maker = UnionMaker(self.db, self.table)
         union_tablename = "%s_union" % tablename
-        union_maker(tablename, union_tablename, join_cols+agg_group_cols, aggs=aggs, colrange=colrange) 
+        union_maker(tablename, union_tablename, join_cols+agg_group_cols, aggs=aggs, colrange=colrange)
 
         # execute group by
         gb_tablename = "%s_gb" % tablename
@@ -91,7 +91,7 @@ class HistogramMaker(object):
         from_clause = "FROM %s as t, (%s) as norm_t" % (gb_tablename, norm_subquery)
         where_clause = "WHERE %s" % ' and '.join(format_iter("t.%s = norm_t.%s", zip(join_cols, join_cols)))
 
-        query = "%s\n%s\n%s" % (select_clause, 
+        query = "%s\n%s\n%s" % (select_clause,
                                  from_clause,
                                  where_clause)
         create_query = "DROP TABLE IF EXISTS %s; CREATE TABLE %s as (%s)" % (tablename, tablename, query)
@@ -140,7 +140,7 @@ class HistogramMaker(object):
         with get_cache(self.cachename) as cache:
             cache[key] = 'True'
 
- 
+
 
 class UnionMaker(object):
     def __init__(self, db, table):
@@ -154,10 +154,11 @@ class UnionMaker(object):
         key = str(tuple( [tablename, union_tablename] + list(gbs) + list(aggs) + (list(colrange) if colrange else [])))
         with get_cache(self.cachename) as cache:
             if key in cache:
+                del cache[key]
                 print "union: cache hit"
-                return cache[key]
+                #return cache[key]
 
-        union_tablename = self.disambiguate_table(tablename, union_tablename, gbs, aggs=[], colrange=None)
+        union_tablename = self.disambiguate_table(tablename, union_tablename, gbs, aggs=aggs, colrange=colrange)
 
         with get_cache(self.cachename) as cache:
             cache[key] = union_tablename
@@ -171,22 +172,22 @@ class UnionMaker(object):
 
         Constructs a union
         """
-        # first create a retardedly large table with the 
+        # first create a retardedly large table with the
         # cross product of all gbs
         combos = product(*[self.mapper(col, colrange) for col in gbs])
         print aggs
         aggs = filter(lambda triple: triple[1] != '*', aggs)
-        agg_funcs, _, agg_cols = aggs and zip(*aggs) or ([], [], [])
+        agg_funcs, agg_args, agg_cols = aggs and zip(*aggs) or ([], [], [])
 
         # XXX: not sure we should be taking the cross product of the columns...
         big_query = []
         first = True
         for idx, combo in enumerate(combos):
             sel_cols = list(format_iter('%s::text as %s', zip(combo, gbs)))
-            sel_cols.extend(agg_cols)
+            sel_cols.extend(agg_args)
             sel_cols = ','.join(sel_cols)
             q = "(select %s from %s)" % (sel_cols, self.table)
-            
+
             with self.db.begin() as conn:
                 if first:
                     q = "drop table if exists %s; create table %s as %s" % (union_tablename, union_tablename, q)
@@ -197,11 +198,11 @@ class UnionMaker(object):
                 first = False
                 conn.execute(q)
 
-        
+
         return union_tablename
 
 
-   
+
 
 class ColMapper(object):
     def __init__(self, db, table):
@@ -210,6 +211,13 @@ class ColMapper(object):
         self.mapping = self.get_attr_mappings()
 
     def __call__(self, col, colrange=None):
+        """
+        @param col the name of column or column prefix
+        @param colrange subset of the mapped columns to return
+               if dgnscd -> dgnscd1,...,dgnscd9
+                  colrange = [2,3]
+        @return dgnscd3, dgnscd4
+        """
         cols = self.mapping.get(col, [col])
         if colrange and len(cols) > 1:
             return [cols[idx] for idx in xrange(len(cols)) if idx in colrange]
