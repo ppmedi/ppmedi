@@ -14,18 +14,15 @@ In general it's
 1. group by N attributes
 1. normalize by M attribute
 1. create histograms for each N-M value
-1. compute statistics on each histogram 
+1. compute statistics on each histogram
     * each N-M value has a single statistic
 
 Issue: multiple columns for a given attribute
 
-TODOs
+Results
 =======
-
-1. Add GINI in addition to skew
-
 1. test on
-  skewed diagnoses
+  skewed diagnoses (in results/count.txt)
     * group by provider, UNION(dgnscd1), count
     * group by provider, UNION(dgnscd2...9), count
     * group by provider, UNION(dgnscd1...9), count
@@ -33,7 +30,7 @@ TODOs
     * group by doctor, UNION(dgnscd2...9), count
     * group by doctor, UNION(dgnscd1...9), count
 
-  skewed costs for treatment
+  skewed costs for treatment (in results/sum.txt)
     * group by provider, UNION(dgnscd1), sum(cost)
     * group by provider, UNION(dgnscd2...9), sum(cost)
     * group by provider, UNION(dgnscd1...9), sum(cost)
@@ -41,7 +38,14 @@ TODOs
     * group by doctor, UNION(dgnscd2...9), sum(cost)
     * group by doctor, UNION(dgnscd1...9), sum(cost)
 
-  skewed treatments
+
+TODOs
+=======
+
+1. Add GINI in addition to skew
+
+1. Tests
+  skewed treatments (can't find treatment column)
     * group by provider, UNION(treatment1), count
     * group by provider, UNION(treatment2...9), count
     * group by provider, UNION(treatment1...9), count
