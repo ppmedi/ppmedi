@@ -43,21 +43,6 @@ TODOs
 =======
 
 1. Add GINI in addition to skew
-
-1. Tests
-  skewed treatments (can't find treatment column)
-    * group by provider, UNION(treatment1), count
-    * group by provider, UNION(treatment2...9), count
-    * group by provider, UNION(treatment1...9), count
-    * group by doctor, UNION(treatment1), count
-    * group by doctor, UNION(treatment2...9), count
-    * group by doctor, UNION(treatment1...9), count
-
-  for some diagnosis, is there a skewed treatment
-  (note: makes non-crossproduct assumption, that dgnsN is treated by treatmentN)
-    * group by provider, UNION(treatment1Xdgnscd1...treatmentNxdgnscdN), count
-    * group by doctor, UNION(treatment1Xdgnscd1...treatmentNxdgnscdN), count
-
 1. generalize distribution getter so there's generic grouping and nomalizer
     * two group bys, aggregate, where clause (optional)
     * normalizer computed on detailed table
@@ -67,6 +52,26 @@ TODOs
     * show examples of the extremes
     * classify all tuples in dataset as  with diag X and without
     * filter for those tuples in base table and throw logit regression at it
+4. Questions
+    * What attributes are you guys even looking at?
+
+### Tests
+
+skewed treatments (can't find treatment column)
+
+* group by provider, UNION(treatment1), count
+* group by provider, UNION(treatment2...9), count
+* group by provider, UNION(treatment1...9), count
+* group by doctor, UNION(treatment1), count
+* group by doctor, UNION(treatment2...9), count
+* group by doctor, UNION(treatment1...9), count
+
+for some diagnosis, is there a skewed treatment
+(note: makes non-crossproduct assumption, that dgnsN is treated by treatmentN)
+
+* group by provider, UNION(treatment1Xdgnscd1...treatmentNxdgnscdN), count
+* group by doctor, UNION(treatment1Xdgnscd1...treatmentNxdgnscdN), count
+
 
 Data sources
 -------
